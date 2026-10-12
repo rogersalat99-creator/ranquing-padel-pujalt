@@ -93,6 +93,34 @@ nav a:hover, nav a:focus-visible { background: #e6ee8f; outline: 2px solid #fff;
 
 #darrera-actualitzacio { margin: 0.7rem 0 0; font-size: 0.75rem; opacity: 0.9; }
 
+/* Botó "Reserva la pista": groc pilota, mateixa forma de píndola que el menú */
+.boto-reserva {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  background: var(--pilota);
+  color: var(--pista-fosc);
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+.boto-reserva:hover, .boto-reserva:focus-visible { background: #e6ee8f; outline: 2px solid var(--pista); outline-offset: 2px; }
+.capcalera .boto-reserva:hover, .capcalera .boto-reserva:focus-visible { outline-color: #fff; }
+.reserva-capcalera { margin: 0.8rem 0 0; }
+
+/* Sota la graella de disponibilitat */
+.reserva-pista {
+  margin-top: 1rem;
+  padding: 0.9rem;
+  background: var(--targeta);
+  border-radius: var(--radi);
+  box-shadow: var(--ombra);
+  text-align: center;
+}
+.reserva-pista p { margin: 0 0 0.7rem; font-size: 0.9rem; font-weight: 600; }
+.reserva-pista .boto-reserva { background: var(--pilota); }
+
 /* ---- Seccions ---------------------------------------------------------------- */
 main { max-width: 62rem; margin: 0 auto; padding: 1rem 12px 2rem; }
 
