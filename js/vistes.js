@@ -15,18 +15,40 @@ const Vistes = (function () {
     return e;
   }
 
+  // Classe CSS del color d'un grup ("grup-1" a "grup-5"); buida si el valor no és 1-5.
+  // Només s'accepten dígits 1-5 perquè el text del full mai acabi dins d'una classe.
+  function classeGrup(grup) {
+    const m = /^[1-5]$/.exec(String(grup === undefined || grup === null ? "" : grup).trim());
+    return m ? "grup-" + m[0] : "";
+  }
+
   // Crea una taula a partir d'unes capçaleres i unes files (arrays de text).
-  function taula(capcaleres, files) {
-    const t = el("table");
+  // opcions (només presentació):
+  //   classe        classe CSS de la taula
+  //   etiquetes     true -> cada cel·la porta data-label (per mostrar-la com a targeta al mòbil)
+  //   colGrup       índex de la columna "Grup": es pinta com a insígnia amb el color del grup
+  //   classesFiles  array amb una classe CSS per fila (p. ex. "grup-3")
+  function taula(capcaleres, files, opcions) {
+    const o = opcions || {};
+    const t = el("table", null, o.classe);
     const cap = el("thead");
     const filaCap = el("tr");
     capcaleres.forEach(h => filaCap.appendChild(el("th", h)));
     cap.appendChild(filaCap);
     t.appendChild(cap);
     const cos = el("tbody");
-    files.forEach(f => {
-      const tr = el("tr");
-      f.forEach(c => tr.appendChild(el("td", c)));
+    files.forEach((f, i) => {
+      const tr = el("tr", null, o.classesFiles ? o.classesFiles[i] : "");
+      f.forEach((c, j) => {
+        const td = el("td");
+        if (o.etiquetes) td.setAttribute("data-label", capcaleres[j]);
+        if (j === o.colGrup) {
+          td.appendChild(el("span", c, "insignia " + classeGrup(c)));
+        } else {
+          td.textContent = c;
+        }
+        tr.appendChild(td);
+      });
       cos.appendChild(tr);
     });
     t.appendChild(cos);
@@ -80,7 +102,9 @@ const Vistes = (function () {
     }
     noms.forEach(nom => {
       const nivell = (equips.find(e => e.grup === nom) || {}).nivell;
-      contenidor.appendChild(el("h3", `Grup ${nom}` + (nivell ? ` · Nivell ${nivell}` : "")));
+      // Cada grup és una targeta amb el seu color
+      const targeta = el("div", null, "targeta " + classeGrup(nom));
+      targeta.appendChild(el("h3", `Grup ${nom}` + (nivell ? ` · Nivell ${nivell}` : "")));
 
       const files = resultat.grups[nom].map(f => {
         let posicio;
@@ -90,8 +114,11 @@ const Vistes = (function () {
         return [posicio, f.parella, f.pj, f.pg, f.pp,
                 `${f.setsG}-${f.setsP}`, `${f.jocsG}-${f.jocsP}`, f.punts];
       });
-      contenidor.appendChild(
-        taula(["Posició", "Parella", "PJ", "PG", "PP", "Sets", "Jocs", "Punts"], files));
+      const envoltori = el("div", null, "taula-scroll");
+      envoltori.appendChild(
+        taula(["Posició", "Parella", "PJ", "PG", "PP", "Sets", "Jocs", "Punts"], files, { classe: "classificacio" }));
+      targeta.appendChild(envoltori);
+      contenidor.appendChild(targeta);
     });
     // Dades que no s'han pogut interpretar (p. ex. resultat mal escrit)
     resultat.avisos.forEach(a => afegirAvis(contenidor, a));
@@ -111,7 +138,8 @@ const Vistes = (function () {
     }
     contenidor.appendChild(taula(
       ["Data", "Grup", "Parella A", "Parella B", "Resultat"],
-      jugats.map(p => [formatData(p.data), p.grup, p.parellaA, p.parellaB, p.resultat])));
+      jugats.map(p => [formatData(p.data), p.grup, p.parellaA, p.parellaB, p.resultat]),
+      { classe: "en-targetes", etiquetes: true, colGrup: 1 }));
   }
 
   // ---- 3. Pròxims partits -------------------------------------------------
@@ -138,7 +166,9 @@ const Vistes = (function () {
     contenidor.appendChild(taula(
       ["Data", "Hora", "Grup", "Parella A", "Parella B", "Estat"],
       pendents.map(p => [formatData(p.data), p.hora || "per confirmar", p.grup, p.parellaA, p.parellaB,
-                         p.data && p.data < avuiISO ? "pendent de resultat" : "pendent"])));
+                         p.data && p.data < avuiISO ? "pendent de resultat" : "pendent"]),
+      { classe: "en-targetes", etiquetes: true, colGrup: 2,
+        classesFiles: pendents.map(p => classeGrup(p.grup)) }));
   }
 
   // ---- 4. Disponibilitat de pista ----------------------------------------
@@ -195,12 +225,29 @@ const Vistes = (function () {
       tr.appendChild(el("th", `${h}:00-${h + 1}:00`));
       dies.forEach(d => {
         const e = estatFranja(reserves, d.iso, h);
-        tr.appendChild(el("td", e.text, e.tipus));
+        // El text es manté (lectors de pantalla, tooltip); al mòbil s'amaga visualment
+        const td = el("td", null, e.tipus);
+        td.title = e.text;
+        td.appendChild(el("span", e.text, "text-franja"));
+        tr.appendChild(td);
       });
       cos.appendChild(tr);
     }
     t.appendChild(cos);
-    contenidor.appendChild(t);
+
+    // Llegenda dels colors de la graella
+    const llegenda = el("ul", null, "llegenda");
+    [["lliure", "Lliure"], ["ocupada", "Ocupada"], ["ranquing", "Partit rànquing"]].forEach(([tipus, text]) => {
+      const li = el("li");
+      li.appendChild(el("span", null, "mostra " + tipus));
+      li.appendChild(document.createTextNode(text));
+      llegenda.appendChild(li);
+    });
+    contenidor.appendChild(llegenda);
+
+    const envoltori = el("div", null, "taula-scroll");
+    envoltori.appendChild(t);
+    contenidor.appendChild(envoltori);
   }
 
   return {
