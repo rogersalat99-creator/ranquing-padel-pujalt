@@ -1,0 +1,12 @@
+/* Estils mínims: només per fer les taules llegibles i que funcioni al mòbil. */
+body { font-family: sans-serif; margin: 0 auto; padding: 0.5rem; max-width: 60rem; line-height: 1.4; }
+table { border-collapse: collapse; width: 100%; margin-bottom: 1rem; }
+th, td { border: 1px solid #999; padding: 0.3rem 0.5rem; text-align: left; }
+/* Les taules amples fan scroll horitzontal al mòbil en lloc de trencar la pàgina */
+.contingut { overflow-x: auto; }
+.error { border: 1px solid #c00; padding: 0.5rem; }
+.avis { border: 1px solid #b80; padding: 0.4rem; font-size: 0.9em; }
+/* Graella de disponibilitat: només una diferència discreta entre estats */
+.graella td { font-size: 0.85em; }
+.graella .ocupada { background: #ddd; }
+.graella .ranquing { background: #eee; font-weight: bold; }

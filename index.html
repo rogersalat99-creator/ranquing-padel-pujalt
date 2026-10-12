@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rànquing de Pàdel de Pujalt</title>
+  <link rel="stylesheet" href="css/estil.css">
+</head>
+<body>
+  <header>
+    <h1>Rànquing de Pàdel de Pujalt</h1>
+    <nav>
+      <a href="#classificacio">Classificació</a> ·
+      <a href="#resultats">Resultats</a> ·
+      <a href="#proxims">Pròxims partits</a> ·
+      <a href="#disponibilitat">Disponibilitat</a>
+    </nav>
+    <p id="darrera-actualitzacio"></p>
+  </header>
+
+  <main>
+    <section id="classificacio">
+      <h2>Classificació</h2>
+      <div class="contingut">Carregant…</div>
+    </section>
+
+    <section id="resultats">
+      <h2>Resultats</h2>
+      <div class="contingut">Carregant…</div>
+    </section>
+
+    <section id="proxims">
+      <h2>Pròxims partits</h2>
+      <div class="contingut">Carregant…</div>
+    </section>
+
+    <section id="disponibilitat">
+      <h2>Disponibilitat de pista</h2>
+      <div class="contingut">Carregant…</div>
+    </section>
+  </main>
+
+  <!-- Ordre important: config i dades primer, app al final -->
+  <script src="js/config.js"></script>
+  <script src="js/dades.js"></script>
+  <script src="js/classificacio.js"></script>
+  <script src="js/vistes.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
